@@ -11,6 +11,6 @@ _temp/
 
 playlistItems.json
 videos.json
-output.txt
+output*.txt
 
 .env
