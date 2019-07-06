@@ -5,12 +5,16 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
 
 #Custom
 _temp/
 
-playlistItems.json
-videos.json
-output*.txt
+output/*
+!output/.gitkeep
 
 .env

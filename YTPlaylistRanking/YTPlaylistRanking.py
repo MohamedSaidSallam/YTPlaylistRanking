@@ -1,8 +1,9 @@
 import json
 import os
-import argparse
-from enum import Enum, auto
+
+from enum import Enum
 from dotenv import load_dotenv
+from pathlib import Path
 
 from googleapiclient.discovery import build
 
@@ -12,9 +13,10 @@ API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
 API_KEY = os.environ.get("YT_DATA_API_V3")
 
-FILE_NAME_PLAYLISTITEMS = "playlistItems.json"
-FILE_NAME_VIDEOS = "videos.json"
-FILE_NAME_OUTPUT = "output.txt"
+FOLDER_NAME_OUTPUT = "output/"
+FILE_NAME_PLAYLISTITEMS = FOLDER_NAME_OUTPUT + "playlistItems.json"
+FILE_NAME_VIDEOS = FOLDER_NAME_OUTPUT + "videos.json"
+FILE_NAME_OUTPUT = FOLDER_NAME_OUTPUT + "output.txt"
 
 class Entry():
     videosIds = []
@@ -31,9 +33,9 @@ class Entry():
 
     def __str__(self):
         if self.none:
-            return f"XXXX\tXXXX\tXXXX\t{self.videoId} {self.title}"
+            return f"XXXX\t\tXXXX\t\tXXXX\t\t{self.videoId} {self.title}"
         else:
-            return f"{self.viewCount}\t{self.likeCount}\t{self.dislikeCount}\t{self.videoId} {self.title}"
+            return f"{self.viewCount}\t\t{self.likeCount}\t\t{self.dislikeCount}\t\t{self.videoId} {self.title}"
 
 
 class SortType(Enum):
@@ -93,42 +95,3 @@ def writeOutputToFile(entries, sortTypes, reverse, removeNumbering):
                 for enteryIndex, entery in enumerate(entries, 1):
                     outputFile.write(("" if removeNumbering else f"{enteryIndex}\t") + f"{entery}\n")
                 outputFile.write("-" * 250 + "\n")
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description=("Gets statistics about videos in a YouTube playlist using the playlist's id to write to a file"
-                     " the list of videos in ascending order according to a certain criteria (ex view count)."
-                     "\nWarning: the output file is overwritten with each run!!"),
-        epilog="https://github.com/TheDigitalPhoenixX/YTPlaylistRanking"
-    )
-
-    parser.add_argument("id", help="Playlist ID")
-    parser.add_argument("-d", "--debug",
-                        help="write intermediate api responses to files(default: %(default)s)",
-                        action="store_true")
-
-    parser.add_argument("-vc", "--viewCount", dest="sortTypes",
-                        help="Sort according to ViewCount(default)",
-                        action="append_const", const=SortType.ViewCount)
-    parser.add_argument("-lc", "--likeCount", dest="sortTypes",
-                        help="Sort according to Like Count",
-                        action="append_const", const=SortType.LikeCount)
-    parser.add_argument("-dlc", "--dislikeCount", dest="sortTypes",
-                        help="Sort according to Dislike Count",
-                        action="append_const", const=SortType.DislikeCount)
-    parser.add_argument("-ltvc", "--likeToViewCount", dest="sortTypes",
-                        help="Sort according to LikeToViewCount",
-                        action="append_const", const=SortType.LikeToViewCount)
-    parser.add_argument("-ltdlc", "--likeToDislikeCount", dest="sortTypes",
-                        help="Sort according to LikeToDislikeCount",
-                        action="append_const", const=SortType.LikeToDislikeCount)
-
-    parser.add_argument("-r", "--reverse",
-                        help="reverse the order of the list(default: %(default)s)",
-                        action="store_true")
-    parser.add_argument("-rn", "--removeNumbering",
-                        help="remove numbering(default: %(default)s)",
-                        action="store_true")
-
-    args = parser.parse_args()
-    main(args.id, args.debug, args.sortTypes if args.sortTypes != None else [SortType.ViewCount], not args.reverse, args.removeNumbering)
