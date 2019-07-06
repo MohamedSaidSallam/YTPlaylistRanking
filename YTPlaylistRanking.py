@@ -96,7 +96,7 @@ def writeOutputToFile(entries, sortTypes, reverse, removeNumbering):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=("Gets statistics about videos in a Youtube playlist using the playlist's id to write to a file"
+        description=("Gets statistics about videos in a YouTube playlist using the playlist's id to write to a file"
                      " the list of videos in ascending order according to a certain criteria (ex view count)."
                      "\nWarning: the output file is overwritten with each run!!"),
         epilog="https://github.com/TheDigitalPhoenixX/YTPlaylistRanking"
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     parser.add_argument("id", help="Playlist ID")
     parser.add_argument("-d", "--debug",
-                        help="write intermediate api responses to files(default: false)",
+                        help="write intermediate api responses to files(default: %(default)s)",
                         action="store_true")
 
     parser.add_argument("-vc", "--viewCount", dest="sortTypes",
@@ -124,11 +124,11 @@ if __name__ == "__main__":
                         action="append_const", const=SortType.LikeToDislikeCount)
 
     parser.add_argument("-r", "--reverse",
-                        help="reverse the order of the list(default: false)",
-                        action="store_false")
+                        help="reverse the order of the list(default: %(default)s)",
+                        action="store_true")
     parser.add_argument("-rn", "--removeNumbering",
-                        help="remove numbering(default: false)",
+                        help="remove numbering(default: %(default)s)",
                         action="store_true")
 
     args = parser.parse_args()
-    main(args.id, args.debug, args.sortTypes if args.sortTypes != None else [SortType.ViewCount], args.reverse, args.removeNumbering)
+    main(args.id, args.debug, args.sortTypes if args.sortTypes != None else [SortType.ViewCount], not args.reverse, args.removeNumbering)
